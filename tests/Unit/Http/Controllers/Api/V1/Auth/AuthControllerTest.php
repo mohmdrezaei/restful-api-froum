@@ -45,6 +45,12 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_show_user_info_if_logged_in()
+    {
+        $user = User::factory()->create();
+        $response = $this->actingAs($user)->get(route('auth.user'));
+        $response->assertStatus(200);    }
+
     //test logout
     public function test_logged_in_user_can_logout()
     {

@@ -19,9 +19,12 @@ use Illuminate\Support\Facades\Route;
     return $request->user();
 });*/
 
-Route::prefix('v1/auth')->group(function (){
-    Route::post('/register',[AuthController::class,'register'])->name('auth.register');
-    Route::post('/login',[AuthController::class,'login'])->name('auth.login');
-    Route::post('/logout',[AuthController::class,'logout'])->name('auth.logout');
+Route::prefix('v1')->group(function (){
 
+    Route::prefix('/auth')->group(function (){
+        Route::post('/register',[AuthController::class,'register'])->name('auth.register');
+        Route::post('/login',[AuthController::class,'login'])->name('auth.login');
+        Route::get('/user',[AuthController::class,'user'])->name('auth.user');
+        Route::post('/logout',[AuthController::class,'logout'])->name('auth.logout');
+    });
 });
