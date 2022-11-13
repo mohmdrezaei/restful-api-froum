@@ -24,10 +24,7 @@ return new class extends Migration
             $table->foreignId('channel_id')
                 ->constrained()
                 ->onDelete('cascade');
-            $table->foreignId('user_id')
-                ->constrained()
-                ->onDelete('cascade');
-
+            $table->unsignedBigInteger('best_answer_id');
             $table->timestamps();
         });
     }
