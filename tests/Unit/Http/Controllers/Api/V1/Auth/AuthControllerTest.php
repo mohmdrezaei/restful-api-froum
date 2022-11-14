@@ -12,7 +12,7 @@ class AuthControllerTest extends TestCase
     use RefreshDatabase;
 
     // test register
-    public function test_register_should_be_validate()
+    public function test_register_should_be_validated()
     {
         $response = $this->postJson(route('auth.register'));
         $response->assertStatus(422);
@@ -29,7 +29,7 @@ class AuthControllerTest extends TestCase
     }
 
     //test login
-    public function test_login_should_be_validate()
+    public function test_login_should_be_validated()
     {
         $response = $this->postJson(route('auth.login'));
         $response->assertStatus(422);
