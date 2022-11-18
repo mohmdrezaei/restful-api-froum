@@ -1,13 +1,13 @@
 <?php
 
-namespace Http\Controllers\Api\V1\Auth;
+namespace Api\V1\Auth;
 
-use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use function route;
 
-class AuthControllerTest extends TestCase
+class AuthTest extends TestCase
 {
     use RefreshDatabase;
 

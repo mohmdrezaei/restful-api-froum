@@ -1,12 +1,12 @@
 <?php
 
-namespace Http\Controllers\Api\V1\Channel;
+namespace Api\V1\Channel;
 
 use App\Models\Channel;
 use Tests\TestCase;
 use function route;
 
-class ChannelControllerTest extends TestCase
+class ChannelTest extends TestCase
 {
 
     public function test_all_channels_list_should_be_accessible()
