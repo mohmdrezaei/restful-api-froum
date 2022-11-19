@@ -21,7 +21,9 @@ class AuthController extends Controller
         ]);
 
         // Insert User Into Database
-        resolve(UserRepository::class)->create($request);
+        $user = resolve(UserRepository::class)->create($request);
+        $defaultSuperAdminEmail = config('permission.default_super_admin_email');
+        $user->email === $defaultSuperAdminEmail ? $user->assignRole('Super Admin') : $user->assignRole('User');
         return response()->json([
             'message' => 'user created successfully'
         ], 201);
@@ -45,7 +47,7 @@ class AuthController extends Controller
         }
     }
 
-    public function user ()
+    public function user()
     {
         return response()->json([Auth::user()], 200);
     }
@@ -55,8 +57,8 @@ class AuthController extends Controller
         Auth::logout();
 
         return response()->json([
-           'message'=>'logged out successfully'
-        ],200);
+            'message' => 'logged out successfully'
+        ], 200);
     }
 
 
