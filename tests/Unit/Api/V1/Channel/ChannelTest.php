@@ -3,57 +3,103 @@
 namespace Api\V1\Channel;
 
 use App\Models\Channel;
+use App\Models\User;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 use function route;
 
 class ChannelTest extends TestCase
 {
 
+    public function registerRolesAndPermissions()
+    {
+        $roleInDatabase = Role::where('name', config('permission.default_roles')[0]);
+        if ($roleInDatabase->count() < 1) {
+            foreach (config('permission.default_roles') as $role)
+                Role::create([
+                    'name' => $role
+                ]);
+
+        }
+
+        $permissionInDatabase = Permission::where('name', config('permission.default_permissions')[0]);
+        if ($permissionInDatabase->count() < 1) {
+            foreach (config('permission.default_permissions') as $permission)
+                Permission::create([
+                    'name' => $permission
+                ]);
+
+        }
+    }
+
     public function test_all_channels_list_should_be_accessible()
     {
-         $response =$this->get(route('channel.all'));
-         $response->assertStatus(200);
+        $response = $this->get(route('channel.all'));
+        $response->assertStatus(200);
     }
 
     public function test_create_channel_should_be_validated()
     {
-        $response = $this->postJson(route('channel.store'));
+        $this->registerRolesAndPermissions();
+
+        $user = User::factory()->create();
+        $user->givePermissionTo('channel management');
+
+        $response = $this->actingAs($user)->postJson(route('channel.store'));
         $response->assertStatus(422);
     }
 
     public function test_create_new_channel()
     {
-     $response =$this->postJson(route('channel.store' ,[
-         'name'=> 'laravel'
-     ]));
+        $this->registerRolesAndPermissions();
 
-     $response->assertStatus(201);
+        $user = User::factory()->create();
+        $user->givePermissionTo('channel management');
+        $response = $this->actingAs($user)->postJson(route('channel.store', [
+            'name' => 'laravel'
+        ]));
+
+        $response->assertStatus(201);
     }
+
     public function test_channel_update_should_be_validated()
     {
-        $response = $this->putJson(route('channel.update'));
+        $this->registerRolesAndPermissions();
+
+        $user = User::factory()->create();
+        $user->givePermissionTo('channel management');
+        $response = $this->actingAs($user)->putJson(route('channel.update'));
         $response->assertStatus(422);
     }
 
     public function test_channel_update_()
     {
+        $this->registerRolesAndPermissions();
+
+        $user = User::factory()->create();
+        $user->givePermissionTo('channel management');
         $channel = Channel::factory()->create([
-            'name'=>'laravel'
+            'name' => 'laravel'
         ]);
-        $response = $this->putJson(route('channel.update',[
-            'id'=>$channel->id,
-            'name'=>'vueJs'
+        $response = $this->actingAs($user)->putJson(route('channel.update', [
+            'id' => $channel->id,
+            'name' => 'vueJs'
         ]));
-        $updatedChannel= Channel::find($channel->id);
+        $updatedChannel = Channel::find($channel->id);
         $response->assertStatus(200);
-        $this->assertEquals('vueJs',$updatedChannel->name);
+        $this->assertEquals('vueJs', $updatedChannel->name);
     }
 
     public function test_delete_channel()
     {
-        $channel= Channel::factory()->create();
-        $response = $this->deleteJson(route('channel.delete'),[
-           'id'=> $channel->id
+        $this->registerRolesAndPermissions();
+
+        $user = User::factory()->create();
+        $user->givePermissionTo('channel management');
+        $channel = Channel::factory()->create();
+        $response = $this->actingAs($user)->deleteJson(route('channel.delete'), [
+            'id' => $channel->id
         ]);
         $response->assertStatus(200);
     }
