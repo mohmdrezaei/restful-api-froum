@@ -4,6 +4,7 @@ namespace Api\V1\Channel;
 
 use App\Models\Channel;
 use App\Models\User;
+use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -44,9 +45,10 @@ class ChannelTest extends TestCase
         $this->registerRolesAndPermissions();
 
         $user = User::factory()->create();
+        Sanctum::actingAs($user);
         $user->givePermissionTo('channel management');
 
-        $response = $this->actingAs($user)->postJson(route('channel.store'));
+        $response = $this->postJson(route('channel.store'));
         $response->assertStatus(422);
     }
 
@@ -55,8 +57,9 @@ class ChannelTest extends TestCase
         $this->registerRolesAndPermissions();
 
         $user = User::factory()->create();
+        Sanctum::actingAs($user);
         $user->givePermissionTo('channel management');
-        $response = $this->actingAs($user)->postJson(route('channel.store', [
+        $response = $this->postJson(route('channel.store', [
             'name' => 'laravel'
         ]));
 
@@ -68,8 +71,9 @@ class ChannelTest extends TestCase
         $this->registerRolesAndPermissions();
 
         $user = User::factory()->create();
+        Sanctum::actingAs($user);
         $user->givePermissionTo('channel management');
-        $response = $this->actingAs($user)->putJson(route('channel.update'));
+        $response = $this->putJson(route('channel.update'));
         $response->assertStatus(422);
     }
 
@@ -78,11 +82,12 @@ class ChannelTest extends TestCase
         $this->registerRolesAndPermissions();
 
         $user = User::factory()->create();
+        Sanctum::actingAs($user);
         $user->givePermissionTo('channel management');
         $channel = Channel::factory()->create([
             'name' => 'laravel'
         ]);
-        $response = $this->actingAs($user)->putJson(route('channel.update', [
+        $response = $this->putJson(route('channel.update', [
             'id' => $channel->id,
             'name' => 'vueJs'
         ]));
@@ -96,9 +101,10 @@ class ChannelTest extends TestCase
         $this->registerRolesAndPermissions();
 
         $user = User::factory()->create();
+        Sanctum::actingAs($user);
         $user->givePermissionTo('channel management');
         $channel = Channel::factory()->create();
-        $response = $this->actingAs($user)->deleteJson(route('channel.delete'), [
+        $response = $this->deleteJson(route('channel.delete'), [
             'id' => $channel->id
         ]);
         $response->assertStatus(200);
