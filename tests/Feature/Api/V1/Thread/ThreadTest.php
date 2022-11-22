@@ -63,21 +63,51 @@ class ThreadTest extends TestCase
         $response->assertStatus(422);
     }
 
+
+
     public function test_update_thread()
     {
-        Sanctum::actingAs(User::factory()->create());
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
         $thread = Thread::factory()->create([
             'title' => 'foo',
             'content' => 'foo',
-            'channel_id'=>Channel::factory()->create()->id
+            'channel_id'=>Channel::factory()->create()->id,
+            'user_id'=> $user->id
         ]);
         $response = $this->putJson(route('threads.update', [$thread]),[
             'title' => 'bar',
             'content' => 'foo',
-            'channel_id'=>Channel::factory()->create()->id
+            'channel_id'=>Channel::factory()->create()->id,
         ])->assertSuccessful();
 
         $thread->refresh();
         $this->assertSame('bar' , $thread->title);
+    }
+
+    public function test_can_best_answer_id_for_thread()
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        $thread = Thread::factory()->create([
+           'user_id'=> $user->id
+        ]);
+        $response = $this->putJson(route('threads.update', [$thread]),[
+            'best_answer_id' => 1,
+        ])->assertSuccessful();
+
+        $thread->refresh();
+        $this->assertSame( 1, $thread->best_answer_id);
+    }
+
+    public function test_delete_thread()
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        $thread = Thread::factory()->create([
+            'user_id'=> $user->id
+        ]);
+        $response = $this->deleteJson(route('threads.destroy', [$thread]));
+        $response->assertStatus(200);
     }
 }
