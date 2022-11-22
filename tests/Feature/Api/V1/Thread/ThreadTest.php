@@ -41,12 +41,43 @@ class ThreadTest extends TestCase
     public function test_create_new_thread()
     {
         Sanctum::actingAs(User::factory()->create());
-        $response = $this->postJson(route('threads.store',[
-            'title' => 'laravel permissions',
+        $response = $this->postJson(route('threads.store') ,[
+        'title' => 'laravel permissions',
             'content' => 'laravel permissions laravel permissions laravel permissions laravel permissions',
             'channel_id'=>Channel::factory()->create()->id
-        ]));
+        ]);
 
         $response->assertStatus(201);
+    }
+
+    public function test_update_thread_should_be_validated()
+    {
+        Sanctum::actingAs(User::factory()->create());
+        $thread = Thread::factory()->create([
+            'title' => 'foo',
+            'content' => 'foo',
+            'channel_id'=>Channel::factory()->create()->id
+        ]);
+        $response = $this->putJson(route('threads.update',[$thread]) , []);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_update_thread()
+    {
+        Sanctum::actingAs(User::factory()->create());
+        $thread = Thread::factory()->create([
+            'title' => 'foo',
+            'content' => 'foo',
+            'channel_id'=>Channel::factory()->create()->id
+        ]);
+        $response = $this->putJson(route('threads.update', [$thread]),[
+            'title' => 'bar',
+            'content' => 'foo',
+            'channel_id'=>Channel::factory()->create()->id
+        ])->assertSuccessful();
+
+        $thread->refresh();
+        $this->assertSame('bar' , $thread->title);
     }
 }

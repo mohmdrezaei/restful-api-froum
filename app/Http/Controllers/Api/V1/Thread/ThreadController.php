@@ -82,9 +82,19 @@ class ThreadController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Thread $thread ,Request $request)
     {
-        //
+        $request->validate([
+            'title'=> 'required',
+            'content'=> 'required',
+            'channel_id'=> 'required'
+        ]);
+
+        resolve(ThreadRepository::class)->update($thread,$request);
+
+        return \response()->json([
+            'message' => 'Thread updated Successfully'
+        ],Response::HTTP_OK);
     }
 
     /**
