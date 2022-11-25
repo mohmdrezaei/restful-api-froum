@@ -15,6 +15,12 @@ return new class extends Migration
     {
         Schema::create('subscribes', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->onDelete('cascade');
+            $table->foreignId('thread_id')
+                ->constrained()
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }

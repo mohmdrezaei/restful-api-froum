@@ -13,5 +13,4 @@ Route::prefix('v1')->group(function () {
 
     //thread routes
     include __DIR__ . '\v1\thread_routes.php';
-
 });

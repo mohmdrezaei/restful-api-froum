@@ -7,13 +7,14 @@ use App\Http\Repositories\ChannelRepository;
 use App\Models\Channel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response;
 
 class ChannelController extends Controller
 {
     public function getAllChannelsList()
     {
         $all_channels = resolve(ChannelRepository::class)->all();
-        return response()->json([$all_channels] , 200);
+        return response()->json([$all_channels] , Response::HTTP_OK);
     }
 
     public function createNewChannel(Request $request)
@@ -26,7 +27,7 @@ class ChannelController extends Controller
 
         return response()->json([
            'message'=>'channel created successfully'
-        ],201);
+        ],Response::HTTP_CREATED);
     }
 
     public function updateChannel(Request $request )
@@ -39,7 +40,7 @@ class ChannelController extends Controller
 
         return response()->json([
             'message'=>'channel edited successfully'
-        ],200);
+        ],Response::HTTP_OK);
     }
 
     public function destroyChannel(Request $request)
@@ -48,7 +49,7 @@ class ChannelController extends Controller
 
         return response()->json([
             'message'=>'channel deleted successfully'
-        ],200);
+        ],Response::HTTP_OK);
     }
 
 

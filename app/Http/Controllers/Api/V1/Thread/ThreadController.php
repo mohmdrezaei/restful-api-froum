@@ -11,33 +11,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ThreadController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $threads = resolve(ThreadRepository::class)->getAllAvailableThreads();
         return response()->json($threads ,Response::HTTP_OK);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -53,36 +33,12 @@ class ThreadController extends Controller
         ],Response::HTTP_CREATED);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($slug)
     {
         $thread =resolve(ThreadRepository::class)->getThreadBySlug($slug);
         return \response()->json($thread,Response::HTTP_OK);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Thread $thread ,Request $request)
     {
        $request->has('best_answer_id')
@@ -107,13 +63,6 @@ class ThreadController extends Controller
             'message' => 'Access denied'
         ],Response::HTTP_FORBIDDEN);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Thread $thread)
     {
         if (Gate::forUser(auth()->user())->allows('user_thread',$thread)){
@@ -126,7 +75,7 @@ class ThreadController extends Controller
 
 
         return \response()->json([
-            'message' => 'Thread deleted Successfully'
-        ],Response::HTTP_OK);
+            'message' => 'access denied'
+        ],Response::HTTP_FORBIDDEN);
     }
 }

@@ -7,6 +7,7 @@ use App\Models\User;
 use Laravel\Sanctum\Sanctum;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 use function config;
 use function route;
@@ -38,7 +39,7 @@ class ChannelTest extends TestCase
     public function test_all_channels_list_should_be_accessible()
     {
         $response = $this->get(route('channel.all'));
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function test_create_channel_should_be_validated()
@@ -50,7 +51,7 @@ class ChannelTest extends TestCase
         $user->givePermissionTo('channel management');
 
         $response = $this->postJson(route('channel.store'));
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function test_create_new_channel()
@@ -64,7 +65,7 @@ class ChannelTest extends TestCase
             'name' => 'laravel'
         ]));
 
-        $response->assertStatus(201);
+        $response->assertStatus(Response::HTTP_CREATED);
     }
 
     public function test_channel_update_should_be_validated()
@@ -75,7 +76,7 @@ class ChannelTest extends TestCase
         Sanctum::actingAs($user);
         $user->givePermissionTo('channel management');
         $response = $this->putJson(route('channel.update'));
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function test_channel_update_()
@@ -93,7 +94,7 @@ class ChannelTest extends TestCase
             'name' => 'vueJs'
         ]));
         $updatedChannel = Channel::find($channel->id);
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
         $this->assertEquals('vueJs', $updatedChannel->name);
     }
 
@@ -108,6 +109,6 @@ class ChannelTest extends TestCase
         $response = $this->deleteJson(route('channel.delete'), [
             'id' => $channel->id
         ]);
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 }

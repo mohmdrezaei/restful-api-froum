@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class ThreadTest extends TestCase
@@ -21,21 +22,21 @@ class ThreadTest extends TestCase
     {
         $response = $this->get(route('threads.index'));
 
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function test_thread_should_be_accessible_by_slug()
     {
         $thread =Thread::factory()->create();
         $response = $this->get(route('threads.show' , [$thread->slug]));
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 
     public function test_create_thread_should_be_validated()
     {
         $response = $this->postJson(route('threads.store'));
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function test_create_new_thread()
@@ -47,7 +48,7 @@ class ThreadTest extends TestCase
             'channel_id'=>Channel::factory()->create()->id
         ]);
 
-        $response->assertStatus(201);
+        $response->assertStatus(Response::HTTP_CREATED);
     }
 
     public function test_update_thread_should_be_validated()
@@ -60,7 +61,7 @@ class ThreadTest extends TestCase
         ]);
         $response = $this->putJson(route('threads.update',[$thread]) , []);
 
-        $response->assertStatus(422);
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
 
@@ -108,6 +109,6 @@ class ThreadTest extends TestCase
             'user_id'=> $user->id
         ]);
         $response = $this->deleteJson(route('threads.destroy', [$thread]));
-        $response->assertStatus(200);
+        $response->assertStatus(Response::HTTP_OK);
     }
 }
