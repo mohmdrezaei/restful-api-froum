@@ -37,15 +37,18 @@ class AnswerController extends Controller
             'content' => 'required',
         ]);
 
-        resolve(AnswerRepository::class)->update($request , $answer);
+        resolve(AnswerRepository::class)->update($request, $answer);
 
         return \response()->json([
             'message' => 'answer updated successfully'
-        ]);
+        ], Response::HTTP_OK);
     }
 
     public function destroy(Answer $answer)
     {
-        //
+        resolve(AnswerRepository::class)->destroy($answer);
+        return \response()->json([
+            'message' => 'answer deleted successfully'
+        ], Response::HTTP_OK);
     }
 }

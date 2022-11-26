@@ -56,7 +56,7 @@ class AnswerTest extends TestCase
         $response->assertJsonValidationErrors(['content']);
     }
 
-    public function test_update_answer_for_thread()
+    public function test_update_own_answer_for_thread()
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user);
@@ -66,12 +66,25 @@ class AnswerTest extends TestCase
         $response = $this->putJson(route('answers.update', [$answer]) , [
             'content' => 'bar',
         ]);
-
-        $answer->refresh();
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJson([
             'message' => 'answer updated successfully'
         ]);
+
+        $answer->refresh();
         $this->assertEquals('bar' , $answer->content);
+    }
+
+    public function test_delete_own_answer()
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        $answer = Answer::factory()->create();
+        $response = $this->deleteJson(route('answers.destroy', [$answer]), []);
+        $response->assertStatus(Response::HTTP_OK);
+        $response->assertJson([
+            'message' => 'answer deleted successfully'
+        ]);
+        $this->assertFalse(Thread::find($answer->thread_id)->answers()->whereContent($answer->content)->exists());
     }
 }
