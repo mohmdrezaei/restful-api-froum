@@ -13,6 +13,7 @@ use Tests\TestCase;
 
 class ThreadTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * A basic feature test example.
      *

@@ -5,12 +5,14 @@ namespace Api\V1\Thread;
 use App\Models\Answer;
 use App\Models\Thread;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class AnswerTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * A basic feature test example.
      *
@@ -61,7 +63,8 @@ class AnswerTest extends TestCase
         $user = User::factory()->create();
         Sanctum::actingAs($user);
         $answer = Answer::factory()->create([
-            'content'=>'foo'
+            'content'=>'foo',
+            'user_id'=>$user->id
         ]);
         $response = $this->putJson(route('answers.update', [$answer]) , [
             'content' => 'bar',
@@ -79,7 +82,9 @@ class AnswerTest extends TestCase
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user);
-        $answer = Answer::factory()->create();
+        $answer = Answer::factory()->create([
+            'user_id'=>$user->id
+        ]);
         $response = $this->deleteJson(route('answers.destroy', [$answer]), []);
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJson([
