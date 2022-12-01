@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Hash;
 
 class UserRepository
 {
+    public function find($id)
+    {
+        User::find($id);
+    }
     /**
      * @param Request $request
      * @return User
