@@ -41,7 +41,7 @@ class AnswerController extends Controller
         $notifiable_user= resolve(UserRepository::class)->find($notifiable_users_id);
 
         // send NewReplySubmitted notification to subscribed users
-        Notification::send($notifiable_user, new  NewReplySubmitted(Thread::find($request->thread_id)));
+        Notification::send(User::find($notifiable_users_id), new  NewReplySubmitted(Thread::find($request->thread_id)));
         return \response()->json([
             'message' => 'answer submitted successfully'
         ], Response::HTTP_CREATED);
