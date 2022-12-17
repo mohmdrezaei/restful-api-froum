@@ -11,6 +11,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ThreadController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['user-block'])->except([
+            'index',
+            'show'
+        ]);
+    }
 
     public function index()
     {

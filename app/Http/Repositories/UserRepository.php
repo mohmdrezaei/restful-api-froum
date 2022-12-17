@@ -24,4 +24,14 @@ class UserRepository
             'password' => Hash::make($request->password)
         ]);
     }
+
+    public function leaderboards()
+    {
+       return User::query()->orderByDesc('score')->paginate();
+    }
+
+    public function isBlock() :bool
+    {
+        return (bool) auth()->user()->is_block;
+    }
 }

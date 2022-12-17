@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\UserBlock;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Spatie\Permission\Middlewares\RoleMiddleware;
@@ -68,6 +69,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' =>RoleMiddleware::class,
         'permission' =>PermissionMiddleware::class,
-        'role_or_permission'=>RoleOrPermissionMiddleware::class
+        'role_or_permission'=>RoleOrPermissionMiddleware::class,
+        'user-block' => UserBlock::class,
     ];
 }

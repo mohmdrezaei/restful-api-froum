@@ -18,6 +18,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AnswerController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['user-block'])->except([
+            'index',
+        ]);
+    }
 
     public function index()
     {
@@ -32,6 +38,8 @@ class AnswerController extends Controller
             'content' => 'required',
             'thread_id' => 'required'
         ]);
+
+        // Insert data into db
         resolve(AnswerRepository::class)->store($request);
 
         // Get List of User Id Which To A Thread Id
@@ -42,6 +50,13 @@ class AnswerController extends Controller
 
         // send NewReplySubmitted notification to subscribed users
         Notification::send(User::find($notifiable_users_id), new  NewReplySubmitted(Thread::find($request->thread_id)));
+
+        // Increase User Score
+        if (Thread::find($request->input('thread_id'))->user_id !== auth()->id()){
+            auth()->user()->increment('score',10);
+
+        }
+
         return \response()->json([
             'message' => 'answer submitted successfully'
         ], Response::HTTP_CREATED);
