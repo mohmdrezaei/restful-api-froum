@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Thread;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -33,5 +34,7 @@ class DatabaseSeeder extends Seeder
                 ]);
 
         }
+
+        Thread::factory(100)->create();
     }
 }
