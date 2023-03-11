@@ -25,6 +25,7 @@ return new class extends Migration
                 ->constrained()
                 ->onDelete('cascade');
             $table->unsignedBigInteger('best_answer_id')->nullable();
+            $table->boolean('flag')->default(1);
             $table->timestamps();
         });
     }

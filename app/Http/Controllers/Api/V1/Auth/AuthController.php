@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth')->only('user');
+    }
     public function register(Request $request)
     {
         // validation form inputs
@@ -25,9 +29,15 @@ class AuthController extends Controller
         $user = resolve(UserRepository::class)->create($request);
         $defaultSuperAdminEmail = config('permission.default_super_admin_email');
         $user->email === $defaultSuperAdminEmail ? $user->assignRole('Super Admin') : $user->assignRole('User');
-        return response()->json([
-            'message' => 'user created successfully'
-        ], Response::HTTP_CREATED);
+        $success['token'] = $user->createToken('MyApp')->plainTextToken;
+        $success['name']= $user->name;
+
+        $response= [
+          'success'=>true,
+          'data'=>$success,
+          'message' => 'user created successfully'
+        ];
+        return response()->json($response, Response::HTTP_CREATED);
     }
 
     public function login(Request $request)
@@ -39,20 +49,31 @@ class AuthController extends Controller
         ]);
 
         //check login user
-        if (Auth::attempt($request->only(['email', 'password']))) {
-            return response()->json([Auth::user()], Response::HTTP_OK);
-
+        if (!Auth::attempt($request->only(['email', 'password']))) {
             throw ValidationException::withMessages([
                 'email' => 'incorrect credentials'
             ]);
         }
-    }
+
+        $user = User::where('email', $request->email)->first();
+        $success['token'] = $user->createToken('MyApp')->plainTextToken;
+        $success['name']= $user->name;
+        return response()->json([
+            'success' => true,
+            'token' => $success,
+            'message' => 'User Logged In Successfully',
+        ], Response::HTTP_OK);
+
+
+        }
+
 
     public function user()
     {
         $data = [
             Auth::user(),
-            'notifications'=>Auth::user()->unreadNotification()
+            'notifications'=>Auth::user()->unreadNotification(),
+            'message'=> 'success'
         ];
         return response()->json($data, Response::HTTP_OK);
     }
